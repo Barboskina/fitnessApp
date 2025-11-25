@@ -1,2 +1,4 @@
-./.idea
-./fitnessAppApi/db.sqlite3
+.idea
+/fitnessAppApi/db.sqlite3
+/fitness-app/.idea
+/fitnessAppApi/.idea/

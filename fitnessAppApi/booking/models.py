@@ -38,8 +38,6 @@ class Booking(models.Model):
         verbose_name = 'Запись на тренировку'
         verbose_name_plural = 'Записи на тренировки'
         ordering = ['-created_at']
-        # Ограничение: один участник не может записаться дважды на одно расписание
-        unique_together = ['email', 'full_name', 'schedule']
 
     def __str__(self):
         return f"{self.full_name} - {self.schedule}"

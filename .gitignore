@@ -1,7 +1,6 @@
 .idea
-/fitnessAppApi/db.sqlite3
-/fitness-app/.idea
-/fitnessAppApi/.idea/
+/backend/db.sqlite3
+/frontend/.idea
+/backend/.idea/
 /frontend/.next/
 /frontend/node_modules/
-/backend/db.sqlite3

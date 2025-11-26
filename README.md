@@ -1,0 +1,5 @@
+# Локальная разработка
+```
+cd frontend && npm run dev
+cd backend && python manage.py runserver
+```

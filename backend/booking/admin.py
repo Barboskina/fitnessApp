@@ -25,7 +25,6 @@ class BookingAdmin(admin.ModelAdmin):
     list_per_page = 25
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
-    date_hierarchy = 'created_at'
 
     def get_workout_name(self, obj):
         return obj.schedule.workout_class.name
@@ -44,8 +43,6 @@ class BookingAdmin(admin.ModelAdmin):
 
     get_datetime.short_description = 'Дата и время'
     get_datetime.admin_order_field = 'schedule__datetime'
-
-    list_select_related = ('schedule', 'schedule__workout_class', 'schedule__trainer')
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(

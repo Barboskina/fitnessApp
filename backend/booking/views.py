@@ -7,13 +7,6 @@ from .models import Booking
 from .serializers import BookingSerializer
 
 
-def add_cors_headers(response):
-    """Добавляет CORS заголовки к response"""
-    response["Access-Control-Allow-Origin"] = "*"
-    response["Access-Control-Allow-Methods"] = "GET, POST"
-    response["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
-    return response
-
 @method_decorator(csrf_exempt, name='dispatch')
 class BookingCreateAPIView(View):
     """API для создания записи на тренировку"""
@@ -44,26 +37,26 @@ class BookingCreateAPIView(View):
                     'errors': serializer.errors
                 }, status=400, json_dumps_params={'ensure_ascii': False})
 
-            return add_cors_headers(response)
+            return response
 
         except json.JSONDecodeError:
             error_response = JsonResponse({
                 'success': False,
                 'message': 'Неверный формат JSON'
             }, status=400, json_dumps_params={'ensure_ascii': False})
-            return add_cors_headers(error_response)
+            return error_response
 
         except Exception as e:
             error_response = JsonResponse({
                 'success': False,
                 'message': f'Внутренняя ошибка сервера: {str(e)}'
             }, status=500, json_dumps_params={'ensure_ascii': False})
-            return add_cors_headers(error_response)
+            return error_response
 
     def options(self, request, *args, **kwargs):
         """Обработка preflight OPTIONS запросов"""
         response = JsonResponse({})
-        return add_cors_headers(response)
+        return response
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScheduleBookingsAPIView(View):
@@ -101,16 +94,16 @@ class ScheduleBookingsAPIView(View):
                 json_dumps_params={'ensure_ascii': False}
             )
 
-            return add_cors_headers(response)
+            return response
 
         except Exception as e:
             error_response = JsonResponse({
                 'success': False,
                 'message': f'Внутренняя ошибка сервера: {str(e)}'
             }, status=500, json_dumps_params={'ensure_ascii': False})
-            return add_cors_headers(error_response)
+            return error_response
 
     def options(self, request, *args, **kwargs):
         """Обработка preflight OPTIONS запросов"""
         response = JsonResponse({})
-        return add_cors_headers(response)
+        return response

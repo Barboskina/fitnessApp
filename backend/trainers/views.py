@@ -14,7 +14,7 @@ def add_cors_headers(response):
 @require_http_methods(["GET", "OPTIONS"])
 def trainer_list(request):
     if request.method == "OPTIONS":
-        return add_cors_headers(JsonResponse({}))
+        return JsonResponse({})
 
     trainers = Trainer.objects.values(
         'id', 'name', 'specialty', 'experience', 'image'
@@ -28,4 +28,4 @@ def trainer_list(request):
         json_dumps_params={'ensure_ascii': False}
     )
 
-    return add_cors_headers(response)
+    return response

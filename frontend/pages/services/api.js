@@ -24,7 +24,7 @@ export const fetchWorkoutClasses = async () => {
 };
 
 export const fetchWorkoutDetails = async (workoutId) => {
-  const response = await fetch(`${API_BASE_URL}/workout/${workoutId}/`);
+  const response = await fetch(`${API_BASE_URL}/schedule/${workoutId}/`);
   return handleResponse(response);
 };
 

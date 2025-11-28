@@ -57,7 +57,7 @@ export default function HeroSection() {
           className="max-w-4xl mx-auto group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-pink-100"
         >
           <img 
-            src="/main.png"
+            src="/main.jpg"
             className="w-full h-48 sm:h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
             alt="Главное изображение"
           />

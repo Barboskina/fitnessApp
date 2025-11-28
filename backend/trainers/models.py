@@ -14,10 +14,11 @@ class Trainer(models.Model):
         verbose_name='Опыт работы (лет)',
         validators=[MinValueValidator(0)],
     )
-    image = models.TextField(
-        verbose_name='URL изображения',
-        max_length=500,
-        default='',
+    image = models.ImageField(
+        verbose_name='Изображение тренера',
+        upload_to='trainers/',
+        blank=True,
+        null=True
     )
     created_at = models.DateTimeField(
         auto_now_add=True,

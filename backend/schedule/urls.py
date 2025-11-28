@@ -1,7 +1,6 @@
-# schedule/urls.py
 from django.urls import path
-from . import views
+from .views import ScheduleByWorkoutAPIView
 
 urlpatterns = [
-
+    path('<int:workout_id>/', ScheduleByWorkoutAPIView.as_view(), name='schedule-by-workout'),
 ]

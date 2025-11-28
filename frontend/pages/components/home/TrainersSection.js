@@ -6,6 +6,8 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { getExperienceText } from '../../utils/formatters';
 import { useScroll } from '../../hooks/useScroll';
 
+const API_BASE_URL = 'http://127.0.0.1:8000/';
+
 export default function TrainersSection({ trainers, isLoading }) {
   const { scrollToSection } = useScroll();
 
@@ -85,9 +87,8 @@ export default function TrainersSection({ trainers, isLoading }) {
                     >
                       <div className="relative mb-4 sm:mb-6">
                         <img
-                          src={trainer.image}
+                          src={trainer.image ? `${API_BASE_URL}/media/${trainer.image}` : '/placeholder.jpg'} 
                           className="w-24 h-24 sm:w-32 sm:h-32 mx-auto object-cover rounded-full shadow-md group-hover:scale-105 transition-transform duration-300"
-                          alt={trainer.name}
                         />
                       </div>
                       <div className="flex-1">

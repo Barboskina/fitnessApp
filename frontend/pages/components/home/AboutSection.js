@@ -5,7 +5,7 @@ import { FEATURES } from '../../utils/constants';
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 bg-gray-50">
+    <section id="about" className="py-16 sm:py-24 px-3 sm:px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -13,8 +13,8 @@ export default function AboutSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-7 sm:mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-6 font-serif">Наши принципы</h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4 hidden md:block">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 sm:mb-5 font-serif">Наши принципы</h2>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 hidden md:block">
             Мы строим сообщество, где поддержка и развитие идут рука об руку
           </p>
         </motion.div>

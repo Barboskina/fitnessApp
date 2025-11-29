@@ -60,33 +60,18 @@ class BookingCreateAPIView(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScheduleBookingsAPIView(View):
-    """API для получения всех записей на конкретное расписание"""
-
+    """API для получения количества всех записей на конкретное расписание"""
     def get(self, request, schedule_id):
         try:
             bookings = Booking.objects.filter(
                 schedule_id=schedule_id,
                 is_active=True
-            ).select_related('schedule', 'schedule__workout_class', 'schedule__trainer')
-
-            bookings_data = []
-            for booking in bookings:
-                bookings_data.append({
-                    'id': booking.id,
-                    'full_name': booking.full_name,
-                    'email': booking.email,
-                    'phone_number': booking.phone_number,
-                    'created_at': booking.created_at.isoformat(),
-                    'workout_name': booking.schedule.workout_class.name,
-                    'trainer_name': booking.schedule.trainer.name,
-                    'datetime': booking.schedule.datetime.isoformat()
-                })
+            ).select_related('schedule')
 
             response_data = {
                 'success': True,
                 'schedule_id': int(schedule_id),
-                'total_bookings': len(bookings_data),
-                'bookings': bookings_data
+                'total_bookings': len(bookings),
             }
 
             response = JsonResponse(

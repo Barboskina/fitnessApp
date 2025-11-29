@@ -1,7 +1,5 @@
-# schedule/models.py
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils import timezone
 
 from trainers.models import Trainer
 from classes.models import WorkoutClass
@@ -42,16 +40,3 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.workout_class.name} - {self.trainer.name} - {self.datetime}"
-
-    def book_slot(self):
-        """Бронирование одного места."""
-        if self.available_slots > 0:
-            self.available_slots -= 1
-            self.save()
-            return True
-        return False
-
-    def free_slot(self):
-        """Освобождение одного места."""
-        self.available_slots += 1
-        self.save()

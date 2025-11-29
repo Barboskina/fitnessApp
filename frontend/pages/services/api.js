@@ -38,3 +38,13 @@ export const createBooking = async (bookingData) => {
   });
   return handleResponse(response);
 };
+
+export const fetchScheduleBookings = async (scheduleId) => {
+  const response = await fetch(`${API_BASE_URL}/bookings/schedule/${scheduleId}/`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return handleResponse(response);
+};

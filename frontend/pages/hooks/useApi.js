@@ -3,13 +3,15 @@ import {
   fetchTrainers, 
   fetchWorkoutClasses, 
   fetchWorkoutDetails,
-  createBooking 
+  createBooking,
+  fetchScheduleBookings
 } from '../services/api';
 
 export const useHomeData = () => {
   const [trainers, setTrainers] = useState([]);
   const [workoutClasses, setWorkoutClasses] = useState([]);
   const [workoutDetails, setWorkoutDetails] = useState({});
+  const [scheduleBookings, setScheduleBookings] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -41,6 +43,18 @@ export const useHomeData = () => {
     }
   }, []);
 
+  const loadScheduleBookings = useCallback(async (scheduleId) => {
+    try {
+      const bookingsData = await fetchScheduleBookings(scheduleId);
+      setScheduleBookings(prev => ({
+        ...prev,
+        [scheduleId]: bookingsData.total_bookings
+      }));
+    } catch (err) {
+      console.error('Error loading schedule bookings:', err);
+    }
+  }, []);
+
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -49,10 +63,12 @@ export const useHomeData = () => {
     trainers, 
     workoutClasses, 
     workoutDetails,
+    scheduleBookings,
     isLoading, 
     error, 
     refetch: loadData,
-    loadWorkoutDetails
+    loadWorkoutDetails,
+    loadScheduleBookings
   };
 };
 

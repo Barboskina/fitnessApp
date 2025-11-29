@@ -1,5 +1,5 @@
 // Модальное окно записи
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, User, MapPin, Calendar, ArrowRight, Users } from 'lucide-react';
 import { useBooking } from '../../hooks/useApi';
@@ -7,7 +7,7 @@ import { useHomeData } from '../../hooks/useApi';
 import { formatDate, getDifficultyText } from '../../utils/formatters';
 
 export default function BookingModal({ isOpen, onClose, selectedClass }) {
-  const { workoutDetails, loadWorkoutDetails } = useHomeData();
+  const { workoutDetails, scheduleBookings, loadWorkoutDetails, loadScheduleBookings } = useHomeData();
   const { bookClass, isLoading, bookingError, setBookingError } = useBooking();
   
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -22,18 +22,23 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
     
     if (details.results && Array.isArray(details.results)) {
       details.results.forEach(trainerData => {
+        const currentBookings = scheduleBookings[trainerData.id] || 0;
+        const availableSlots = Math.max(0, trainerData.available_slots - currentBookings);
+        
         slots.push({
           id: trainerData.id,
           trainer_name: trainerData.trainer_name,
           datetime: trainerData.datetime,
-          available_slots: trainerData.available_slots,
+          available_slots: availableSlots,
+          current_bookings: currentBookings,
+          max_slots: trainerData.available_slots,
           trainer_id: trainerData.trainer,
         });
       });
     }
     
     return slots;
-  }, [selectedClass, workoutDetails]);
+  }, [selectedClass, workoutDetails, scheduleBookings]);
 
   const handleSlotSelect = useCallback((slot) => {
     setSelectedSlot(slot);
@@ -79,21 +84,34 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
         if (workoutDetails[selectedClass.id]) {
           await loadWorkoutDetails(selectedClass.id);
         }
+
+        if (selectedSlot.id) {
+          await loadScheduleBookings(selectedSlot.id);
+        }
       }
     } catch (err) {
       console.error('Booking failed:', err);
     }
-  }, [selectedSlot, formData, selectedClass, bookClass, workoutDetails, loadWorkoutDetails]);
+  }, [selectedSlot, formData, selectedClass, bookClass, workoutDetails, loadWorkoutDetails, loadScheduleBookings]);
 
-  // Загружаем детали тренировки при открытии модального окна
-  React.useEffect(() => {
-    if (isOpen && selectedClass && !workoutDetails[selectedClass.id]) {
-      loadWorkoutDetails(selectedClass.id);
+  useEffect(() => {
+    if (isOpen && selectedClass) {
+      if (!workoutDetails[selectedClass.id]) {
+        loadWorkoutDetails(selectedClass.id);
+      }
+      
+      if (workoutDetails[selectedClass.id] && workoutDetails[selectedClass.id].results) {
+        workoutDetails[selectedClass.id].results.forEach(slot => {
+          if (slot.id && !scheduleBookings[slot.id]) {
+            loadScheduleBookings(slot.id);
+          }
+        });
+      }
     }
-  }, [isOpen, selectedClass, workoutDetails, loadWorkoutDetails]);
+  }, [isOpen, selectedClass, workoutDetails, scheduleBookings, loadWorkoutDetails, loadScheduleBookings]);
 
   // Сбрасываем состояние при закрытии
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       setSelectedSlot(null);
       setIsSignedUp(false);

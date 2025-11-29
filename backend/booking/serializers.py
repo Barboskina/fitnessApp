@@ -37,8 +37,6 @@ class BookingSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        """Создание записи и уменьшение количества доступных мест"""
         booking = Booking.objects.create(**validated_data)
-        booking.schedule.book_slot()
 
         return booking

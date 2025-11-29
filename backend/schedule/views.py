@@ -1,18 +1,19 @@
+"""API views для приложения расписания."""
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from rest_framework.views import APIView
 from django.utils import timezone
+from rest_framework.views import APIView
 from .models import Schedule
 from .serializers import ScheduleSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScheduleByWorkoutAPIView(APIView):
-    """
-    API для получения расписания по ID тренировки
-    """
+    """API для получения расписания по ID тренировки."""
+
     def get(self, request, workout_id):
+        """Обработка GET запроса для получения расписания по тренировке."""
         try:
             schedules = Schedule.objects.filter(
                 workout_class_id=workout_id,
@@ -30,7 +31,7 @@ class ScheduleByWorkoutAPIView(APIView):
 
             return response
 
-        except Exception as e:
+        except Exception:
             error_response = JsonResponse(
                 {'error': 'Внутренняя ошибка сервера'},
                 status=500,
@@ -39,6 +40,6 @@ class ScheduleByWorkoutAPIView(APIView):
             return error_response
 
     def options(self, request, *args, **kwargs):
-        """Обработка preflight OPTIONS запросов"""
+        """Обработка preflight OPTIONS запросов."""
         response = JsonResponse({})
         return response

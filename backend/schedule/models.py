@@ -1,3 +1,4 @@
+"""Модели приложения расписания."""
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -6,6 +7,8 @@ from classes.models import WorkoutClass
 
 
 class Schedule(models.Model):
+    """Модель расписания тренировок."""
+
     trainer = models.ForeignKey(
         Trainer,
         on_delete=models.CASCADE,

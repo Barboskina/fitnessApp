@@ -1,0 +1,37 @@
+[MASTER]
+load-plugins=pylint_django
+ignore =
+    venv,
+    __pycache__,
+    migrations,
+    tests,
+    .git,
+    static,
+    media
+
+[BASIC]
+good-names=
+    _,
+    db,
+    pk,
+    id,
+    qs,
+    os,
+    cls,
+    app,
+    request,
+    kwargs,
+    args
+
+[FORMAT]
+max-line-length=100
+
+[DESIGN]
+max-attributes=15
+min-public-methods=1
+
+[TYPECHECK]
+generated-members=objects
+
+[DJANGO]
+# Django specific settings

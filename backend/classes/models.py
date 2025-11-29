@@ -1,8 +1,11 @@
+"""Модели приложения классов тренировок."""
 from django.db import models
 from django.core.validators import MinValueValidator
 
 
 class WorkoutClass(models.Model):
+    """Модель класса тренировки."""
+
     DIFFICULTY_LEVELS = [
         ('beginner', 'Начинающий'),
         ('intermediate', 'Средний'),

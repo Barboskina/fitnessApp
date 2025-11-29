@@ -1,3 +1,4 @@
+"""Сериализаторы для приложения расписания."""
 from rest_framework import serializers
 from django.utils import timezone
 from trainers.models import Trainer
@@ -6,18 +7,24 @@ from .models import Schedule
 
 
 class TrainerSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели тренера."""
+
     class Meta:
         model = Trainer
-        fields = ['id', 'name',]
+        fields = ['id', 'name', ]
 
 
 class WorkoutClassSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели класса тренировки."""
+
     class Meta:
         model = WorkoutClass
         fields = ['id', 'name', 'description', 'duration_minutes', 'difficulty', 'price']
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели расписания."""
+
     # Базовые поля для отображения
     trainer_name = serializers.CharField(source='trainer.name', read_only=True)
     workout_name = serializers.CharField(source='workout_class.name', read_only=True)
@@ -48,11 +55,11 @@ class ScheduleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Дата тренировки не может быть в прошлом.")
         return value
 
-    def validate(self, data):
-        """Общая валидация."""
+    def validate(self, attrs):
+        """Общая валидация данных расписания."""
         # Проверка что тренер не занят в это время
-        trainer = data.get('trainer')
-        datetime = data.get('datetime')
+        trainer = attrs.get('trainer')
+        datetime = attrs.get('datetime')
 
         if trainer and datetime:
             conflicting_schedules = Schedule.objects.filter(
@@ -69,4 +76,4 @@ class ScheduleSerializer(serializers.ModelSerializer):
                     "datetime": "Тренер уже занят в это время."
                 })
 
-        return data
+        return attrs

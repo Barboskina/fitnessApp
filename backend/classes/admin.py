@@ -1,9 +1,13 @@
+"""Конфигурация административного интерфейса для приложения classes."""
+
 from django.contrib import admin
 from .models import WorkoutClass
 
 
 @admin.register(WorkoutClass)
 class WorkoutClassAdmin(admin.ModelAdmin):
+    """Класс для настройки админ-панели модели WorkoutClass."""
+
     list_display = (
         'name',
         'price',

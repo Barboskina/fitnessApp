@@ -1,8 +1,11 @@
+"""Модели приложения тренеров."""
 from django.db import models
 from django.core.validators import MinValueValidator
 
 
 class Trainer(models.Model):
+    """Модель тренера фитнес-клуба."""
+
     name = models.CharField(
         max_length=255,
         verbose_name='Имя тренера'

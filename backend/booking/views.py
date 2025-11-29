@@ -1,8 +1,9 @@
+"""API views для приложения записи на тренировку."""
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
-import json
 from .models import Booking
 from .serializers import BookingSerializer
 
@@ -10,7 +11,9 @@ from .serializers import BookingSerializer
 @method_decorator(csrf_exempt, name='dispatch')
 class BookingCreateAPIView(View):
     """API для создания записи на тренировку"""
+
     def post(self, request):
+        """Обработка POST запроса для создания записи на тренировку."""
         try:
             data = json.loads(request.body)
             serializer = BookingSerializer(data=data)
@@ -54,14 +57,17 @@ class BookingCreateAPIView(View):
             return error_response
 
     def options(self, request, *args, **kwargs):
-        """Обработка preflight OPTIONS запросов"""
+        """Обработка preflight OPTIONS запросов."""
         response = JsonResponse({})
         return response
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScheduleBookingsAPIView(View):
     """API для получения количества всех записей на конкретное расписание"""
+
     def get(self, request, schedule_id):
+        """Обработка GET запроса для получения записи на тренировку по id тренировки."""
         try:
             bookings = Booking.objects.filter(
                 schedule_id=schedule_id,
@@ -89,6 +95,6 @@ class ScheduleBookingsAPIView(View):
             return error_response
 
     def options(self, request, *args, **kwargs):
-        """Обработка preflight OPTIONS запросов"""
+        """Обработка preflight OPTIONS запросов."""
         response = JsonResponse({})
         return response

@@ -1,8 +1,11 @@
+"""Сериализаторы для приложения классов тренировок."""
 from rest_framework import serializers
 from .models import WorkoutClass
 
 
 class WorkoutClassSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели класса тренировки."""
+
     duration_hours = serializers.FloatField(read_only=True)
     is_free = serializers.BooleanField(read_only=True)
     difficulty_display = serializers.CharField(

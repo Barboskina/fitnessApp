@@ -1,3 +1,4 @@
+"""Конфигурация Django проекта Fitness Club."""
 import os
 from pathlib import Path
 

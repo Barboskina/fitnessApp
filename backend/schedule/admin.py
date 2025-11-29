@@ -1,10 +1,12 @@
-# schedule/admin.py (минимальная версия)
+"""Админ-панель для приложения расписания."""
 from django.contrib import admin
 from .models import Schedule
 
 
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
+    """Админ-интерфейс для управления расписанием тренировок."""
+
     list_display = (
         'trainer',
         'workout_class',

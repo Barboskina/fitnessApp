@@ -1,3 +1,4 @@
+"""API views для приложения классов тренировок."""
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .models import WorkoutClass
@@ -5,6 +6,7 @@ from .models import WorkoutClass
 
 @require_http_methods(["GET", "OPTIONS"])
 def workout_class_list(request):
+    """Обработчик для получения списка активных классов тренировок."""
     if request.method == "OPTIONS":
         return JsonResponse({})
 

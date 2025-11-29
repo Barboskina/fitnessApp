@@ -1,3 +1,4 @@
+"""Модели приложения бронирования."""
 from django.db import models
 
 

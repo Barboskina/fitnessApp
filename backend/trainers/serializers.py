@@ -1,8 +1,11 @@
+"""Сериализаторы для приложения тренеров."""
 from rest_framework import serializers
 from .models import Trainer
 
 
 class TrainerSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели тренера."""
+
     experience_display = serializers.CharField(read_only=True)
 
     experience = serializers.FloatField(

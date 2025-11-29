@@ -1,5 +1,5 @@
 // Модальное окно записи
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, User, MapPin, Calendar, ArrowRight, Users } from 'lucide-react';
 import { useBooking } from '../../hooks/useApi';
@@ -13,6 +13,67 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [formErrors, setFormErrors] = useState({});
+  
+  // Используем ref для хранения функций, которые не должны меняться
+  const resetFormRef = useRef(() => {
+    setSelectedSlot(null);
+    setIsSignedUp(false);
+    setFormData({ name: '', email: '', phone: '' });
+    setFormErrors({});
+    setBookingError(null);
+  });
+
+  // Функция форматирования телефона
+  const formatPhone = (phone) => {
+    const cleaned = phone.replace(/\D/g, '');
+    const limited = cleaned.slice(0, 11);
+    
+    if (limited.length === 0) return '';
+    if (limited.length === 1) return `+7`;
+    if (limited.length <= 4) return `+7 (${limited.slice(1, 4)}`;
+    if (limited.length <= 7) return `+7 (${limited.slice(1, 4)}) ${limited.slice(4, 7)}`;
+    if (limited.length <= 9) return `+7 (${limited.slice(1, 4)}) ${limited.slice(4, 7)}-${limited.slice(7, 9)}`;
+    return `+7 (${limited.slice(1, 4)}) ${limited.slice(4, 7)}-${limited.slice(7, 9)}-${limited.slice(9, 11)}`;
+  };
+
+  // Функция валидации email
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Функция валидации телефона
+  const validatePhone = (phone) => {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length === 11; // +7 и 10 цифр
+  };
+
+  // Функция валидации формы - выносим в useCallback
+  const validateForm = useCallback(() => {
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = 'Поле обязательно для заполнения';
+    } else if (formData.name.trim().length < 2) {
+      errors.name = 'Имя должно содержать минимум 2 символа';
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Поле обязательно для заполнения';
+    } else if (!validateEmail(formData.email)) {
+      errors.email = 'Введите корректный email адрес';
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = 'Поле обязательно для заполнения';
+    } else if (!validatePhone(formData.phone)) {
+      errors.phone = 'Введите корректный номер телефона';
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  }, [formData.name, formData.email, formData.phone]);
 
   const getAvailableSlots = useCallback(() => {
     if (!selectedClass || !workoutDetails[selectedClass.id]) return [];
@@ -46,17 +107,32 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
+    
+    let formattedValue = value;
+    
+    if (name === 'phone') {
+      formattedValue = formatPhone(value);
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: formattedValue
     }));
+
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
 
     if (bookingError) {
       setBookingError(null);
     }
-  }, [bookingError, setBookingError]);
+  }, [bookingError, setBookingError, formErrors]);
 
-  const handleConfirmBooking = useCallback(async (e) => {
+  // Убираем useCallback и делаем обычную функцию
+  const handleConfirmBooking = async (e) => {
     e.preventDefault();
     
     if (!selectedSlot) {
@@ -64,8 +140,7 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
       return;
     }
 
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
-      alert('Пожалуйста, заполните все обязательные поля');
+    if (!validateForm()) {
       return;
     }
 
@@ -73,7 +148,7 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
       const bookingData = {
         full_name: formData.name.trim(),
         email: formData.email.trim(),
-        phone_number: formData.phone.trim(),
+        phone_number: formData.phone.replace(/\D/g, ''),
         schedule: selectedSlot.id || selectedSlot.trainer_schedule_id
       };
 
@@ -92,7 +167,7 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
     } catch (err) {
       console.error('Booking failed:', err);
     }
-  }, [selectedSlot, formData, selectedClass, bookClass, workoutDetails, loadWorkoutDetails, loadScheduleBookings]);
+  };
 
   useEffect(() => {
     if (isOpen && selectedClass) {
@@ -110,15 +185,17 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
     }
   }, [isOpen, selectedClass, workoutDetails, scheduleBookings, loadWorkoutDetails, loadScheduleBookings]);
 
-  // Сбрасываем состояние при закрытии
+  // Сбрасываем состояние при закрытии - используем ref для избежания cascading renders
   useEffect(() => {
     if (!isOpen) {
-      setSelectedSlot(null);
-      setIsSignedUp(false);
-      setFormData({ name: '', email: '', phone: '' });
-      setBookingError(null);
+      // Используем setTimeout для избежания синхронного обновления состояния в эффекте
+      const timeoutId = setTimeout(() => {
+        resetFormRef.current();
+      }, 0);
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [isOpen, setBookingError]);
+  }, [isOpen]);
 
   if (!selectedClass) return null;
 
@@ -260,9 +337,14 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
                           required 
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="w-full p-2 sm:p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base" 
+                          className={`w-full p-2 sm:p-3 bg-white border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base ${
+                            formErrors.name ? 'border-red-300' : 'border-gray-300'
+                          }`}
                           placeholder="Иванова Мария" 
                         />
+                        {formErrors.name && (
+                          <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
+                        )}
                       </div>
                       
                       <div className="grid gap-3 sm:gap-4">
@@ -276,9 +358,14 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
                             required 
                             value={formData.email}
                             onChange={handleInputChange}
-                            className="w-full p-2 sm:p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base" 
+                            className={`w-full p-2 sm:p-3 bg-white border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base ${
+                              formErrors.email ? 'border-red-300' : 'border-gray-300'
+                            }`}
                             placeholder="maria@example.com" 
                           />
+                          {formErrors.email && (
+                            <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                          )}
                         </div>
                         
                         <div>
@@ -291,9 +378,14 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
                             required 
                             value={formData.phone}
                             onChange={handleInputChange}
-                            className="w-full p-2 sm:p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base" 
+                            className={`w-full p-2 sm:p-3 bg-white border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:outline-none transition-colors placeholder-gray-400 text-sm sm:text-base ${
+                              formErrors.phone ? 'border-red-300' : 'border-gray-300'
+                            }`}
                             placeholder="+7 (999) 999-99-99" 
                           />
+                          {formErrors.phone && (
+                            <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>
+                          )}
                         </div>
                       </div>
                     </div>

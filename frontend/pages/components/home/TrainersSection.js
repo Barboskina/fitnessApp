@@ -87,8 +87,12 @@ export default function TrainersSection({ trainers, isLoading }) {
                     >
                       <div className="relative mb-4 sm:mb-6">
                         <img
-                          src={trainer.image ? `${API_BASE_URL}/media/${trainer.image}` : '/placeholder.jpg'} 
+                          src={trainer.image ? `${API_BASE_URL}media/${trainer.image}` : '/default-avatar.png'}
+                          alt={`Фотография тренера ${trainer.name}`}
                           className="w-24 h-24 sm:w-32 sm:h-32 mx-auto object-cover rounded-full shadow-md group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.src = '/default-avatar.png'
+                          }}
                         />
                       </div>
                       <div className="flex-1">

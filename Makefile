@@ -1,6 +1,11 @@
 lint-backend:
 	cd backend && pylint .
 
+lint-frontend:
+	cd frontend && npx eslint .
+
+lint: lint-backend lint-frontend
+
 install-backend:
 	cd backend && pip install -r requirements.txt
 

@@ -2,8 +2,41 @@ import React, { useState } from 'react';
 import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Twitter, ArrowUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Выносим компонент аккордеона наружу
+const AccordionSection = ({ title, children, sectionKey, openSections, onToggle }) => (
+  <div className="border-b border-gray-700/50 last:border-b-0">
+    <button
+      onClick={() => onToggle(sectionKey)}
+      className="w-full py-4 flex items-center justify-between text-left font-semibold font-serif"
+    >
+      <span className="text-lg">{title}</span>
+      {openSections[sectionKey] ? (
+        <ChevronUp className="w-5 h-5 text-pink-400" />
+      ) : (
+        <ChevronDown className="w-5 h-5 text-pink-400" />
+      )}
+    </button>
+    <AnimatePresence>
+      {openSections[sectionKey] && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden"
+        >
+          <div className="pb-4">
+            {children}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
+
 const Footer = () => {
   const [openSections, setOpenSections] = useState({});
+  
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -28,38 +61,6 @@ const Footer = () => {
     { icon: Facebook, href: 'https://facebook.com/mnemozhno', label: 'Facebook' },
     { icon: Twitter, href: 'https://twitter.com/mnemozhno', label: 'Twitter' }
   ];
-
-  // Аккордеон секции для мобильных
-  const AccordionSection = ({ title, children, sectionKey }) => (
-    <div className="border-b border-gray-700/50 last:border-b-0">
-      <button
-        onClick={() => toggleSection(sectionKey)}
-        className="w-full py-4 flex items-center justify-between text-left font-semibold font-serif"
-      >
-        <span className="text-lg">{title}</span>
-        {openSections[sectionKey] ? (
-          <ChevronUp className="w-5 h-5 text-pink-400" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-pink-400" />
-        )}
-      </button>
-      <AnimatePresence>
-        {openSections[sectionKey] && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="pb-4">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
 
   return (
     <footer className="relative bg-gradient-to-br from-gray-900 to-black text-white overflow-hidden">
@@ -87,12 +88,16 @@ const Footer = () => {
               Пространство, где каждая женщина находит силу, уверенность и поддержку. 
               Мы создаём сообщество, вдохновляющее на изменения.
             </p>
-            
           </motion.div>
 
           {/* Мобильный аккордеон */}
           <div className="lg:hidden space-y-2">
-            <AccordionSection title="Навигация" sectionKey="navigation">
+            <AccordionSection 
+              title="Навигация" 
+              sectionKey="navigation"
+              openSections={openSections}
+              onToggle={toggleSection}
+            >
               <ul className="space-y-3">
                 {quickLinks.map((link, index) => (
                   <motion.li 
@@ -113,7 +118,12 @@ const Footer = () => {
               </ul>
             </AccordionSection>
 
-            <AccordionSection title="Контакты" sectionKey="contacts">
+            <AccordionSection 
+              title="Контакты" 
+              sectionKey="contacts"
+              openSections={openSections}
+              onToggle={toggleSection}
+            >
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-pink-400 mt-1 flex-shrink-0" />
@@ -137,7 +147,12 @@ const Footer = () => {
               </div>
             </AccordionSection>
 
-            <AccordionSection title="Часы работы" sectionKey="hours">
+            <AccordionSection 
+              title="Часы работы" 
+              sectionKey="hours"
+              openSections={openSections}
+              onToggle={toggleSection}
+            >
               <div className="space-y-3 text-gray-300 text-sm">
                 <div className="flex justify-between">
                   <span>Пн - Пт</span>
@@ -270,7 +285,6 @@ const Footer = () => {
               2025 Mne Mozhno. 
               <span className="block sm:inline mt-1 sm:mt-0"> Сделано с ❤️ для сильных женщин</span>
             </p>
-            
           </div>
         </motion.div>
       </div>

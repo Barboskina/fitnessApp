@@ -15,7 +15,6 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [formErrors, setFormErrors] = useState({});
   
-  // Используем ref для хранения функций, которые не должны меняться
   const resetFormRef = useRef(() => {
     setSelectedSlot(null);
     setIsSignedUp(false);
@@ -46,10 +45,9 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
   // Функция валидации телефона
   const validatePhone = (phone) => {
     const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length === 11; // +7 и 10 цифр
+    return cleaned.length === 11;
   };
 
-  // Функция валидации формы - выносим в useCallback
   const validateForm = useCallback(() => {
     const errors = {};
 
@@ -131,7 +129,6 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
     }
   }, [bookingError, setBookingError, formErrors]);
 
-  // Убираем useCallback и делаем обычную функцию
   const handleConfirmBooking = async (e) => {
     e.preventDefault();
     
@@ -185,10 +182,8 @@ export default function BookingModal({ isOpen, onClose, selectedClass }) {
     }
   }, [isOpen, selectedClass, workoutDetails, scheduleBookings, loadWorkoutDetails, loadScheduleBookings]);
 
-  // Сбрасываем состояние при закрытии - используем ref для избежания cascading renders
   useEffect(() => {
     if (!isOpen) {
-      // Используем setTimeout для избежания синхронного обновления состояния в эффекте
       const timeoutId = setTimeout(() => {
         resetFormRef.current();
       }, 0);

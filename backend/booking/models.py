@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Booking(models.Model):
-    """Модель для записи на тренировку"""
+    """Модель для брони тренировки"""
     id = models.AutoField(primary_key=True, verbose_name='ID записи')
     full_name = models.CharField(
         max_length=255,
@@ -36,8 +36,8 @@ class Booking(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Запись на тренировку'
-        verbose_name_plural = 'Записи на тренировки'
+        verbose_name = 'Бронь'
+        verbose_name_plural = 'Брони'
         ordering = ['-created_at']
 
     def __str__(self):

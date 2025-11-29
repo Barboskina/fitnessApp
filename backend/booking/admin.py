@@ -1,11 +1,11 @@
-"""Админ-панель для модели записи на тренировку."""
+"""Админ-панель для модели бронирования тренировок."""
 from django.contrib import admin
 from .models import Booking
 
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    """Админ-интерфейс для управления записью на тренировку."""
+    """Админ-интерфейс для управления бронью тренировок."""
 
     list_display = (
         'id',

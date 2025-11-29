@@ -1,9 +1,9 @@
-"""Конфигурация приложения для записи на тренировку."""
+"""Конфигурация приложения для брони тренировок."""
 from django.apps import AppConfig
 
 
 class BookingConfig(AppConfig):
-    """Конфигурация приложения для управления записью на тренировку."""
+    """Конфигурация приложения для управления бронями тренировок."""
 
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'booking'

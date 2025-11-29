@@ -50,6 +50,6 @@ class BookingSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        """Создание новой записи на тренировку."""
+        """Создание новой брони тренировки."""
         booking = Booking.objects.create(**validated_data)
         return booking

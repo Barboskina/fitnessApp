@@ -1,4 +1,4 @@
-"""API views для приложения записи на тренировку."""
+"""API views для приложения брони тренировки."""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,7 +13,7 @@ class BookingCreateAPIView(View):
     """API для создания записи на тренировку"""
 
     def post(self, request):
-        """Обработка POST запроса для создания записи на тренировку."""
+        """Обработка POST запроса для брони тренировки."""
         try:
             data = json.loads(request.body)
             serializer = BookingSerializer(data=data)
@@ -64,10 +64,10 @@ class BookingCreateAPIView(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScheduleBookingsAPIView(View):
-    """API для получения количества всех записей на конкретное расписание"""
+    """API для получения количества всех броней на конкретную тренировку"""
 
     def get(self, request, schedule_id):
-        """Обработка GET запроса для получения записи на тренировку по id тренировки."""
+        """Обработка GET запроса для получения броней тренировки по id тренировки."""
         try:
             bookings = Booking.objects.filter(
                 schedule_id=schedule_id,
